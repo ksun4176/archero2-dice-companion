@@ -19,19 +19,13 @@ const QuestTracker = memo(function QuestTracker({
 }: TaskProgressProps) {
   const numBreakpoints = quest.breakpoints[0].length;
 
-  const numBreakpointsMet = useMemo(() => {
+  const { numBreakpointsMet, completionPercent, remainingDice } = useMemo(() => {
     const idx = quest.breakpoints[0].findIndex(bp => bp > progress);
-    return idx === -1 ? numBreakpoints : idx;
+    const numBreakpointsMet = idx === -1 ? numBreakpoints : idx;
+    const completionPercent = numBreakpoints === 0 ? 0 : (numBreakpointsMet / numBreakpoints) * 100;
+    const remainingDice = quest.breakpoints[1].slice(numBreakpointsMet).reduce((a, b) => a + b, 0);
+    return { numBreakpointsMet, completionPercent, remainingDice };
   }, [progress, numBreakpoints, quest.breakpoints]);
-
-  const numDone = useMemo(() => {
-    return numBreakpoints === 0 ? 0 : (numBreakpointsMet / numBreakpoints) * 100;
-  }, [numBreakpointsMet, numBreakpoints]);
-
-  const numDiceLeft = useMemo(() => {
-    const breakpointsLeft = quest.breakpoints[1].slice(numBreakpointsMet);
-    return breakpointsLeft.reduce((prev, current) => prev + current, 0);
-  }, [numBreakpointsMet, quest.breakpoints]);
 
   const updateProgress = (e: ChangeEvent<HTMLInputElement>) => {
     let value = parseInt(e.target.value);
@@ -46,7 +40,7 @@ const QuestTracker = memo(function QuestTracker({
         <div className="text-md flex items-center gap-1">
           <span>Remaining</span>
           <Dices />
-          <span>{numDiceLeft}</span>
+          <span>{remainingDice}</span>
         </div>
       </CardHeader>
       <CardContent>
@@ -57,11 +51,12 @@ const QuestTracker = memo(function QuestTracker({
             placeholder={quest.placeholderText}
             value={`${progress}`}
             onChange={updateProgress}
+            step={1}
             min={0}
             className="flex-1"
           />
           <Progress
-            value={numDone}
+            value={completionPercent}
             className="flex-3 h-5 rounded-md [&>div]:bg-success"
           />
         </div>
@@ -75,7 +70,7 @@ const QuestTracker = memo(function QuestTracker({
             return (
               <div
                 key={index}
-                className={`flex items-center gap-1 px-2 py-1 bg-accent rounded transition-all' ${isCompleted && 'bg-success/10 text-success'}`}
+                className={`flex items-center gap-1 px-2 py-1 bg-accent rounded transition-all ${isCompleted && 'bg-success/10 text-success'}`}
               >
                 {isCompleted ?
                   <CheckCircle size={14} /> :
@@ -124,12 +119,11 @@ export default function WhereAreDiceContent() {
   }, [questProgress]);
 
   const onProgressChange = useCallback((name: QuestName, completed: number) => {
-    const newQuestProgress = {
-      ...questProgress,
+    setQuestProgress(prev => ({
+      ...prev,
       [name]: completed
-    }
-    setQuestProgress(newQuestProgress);
-  }, [questProgress]);
+    }));
+  }, []);
 
 
   const { numEarned, numRemaining } = useMemo(() => {
@@ -146,14 +140,6 @@ export default function WhereAreDiceContent() {
     });
     return { numEarned, numRemaining }
   }, [questProgress]);
-
-  // const numDone = useMemo(() => {
-  //   return numBreakpoints === 0 ? 0 : (numBreakpointsMet / numBreakpoints) * 100;
-  // }, [numBreakpointsMet, numBreakpoints]);
-
-  // const numDiceLeft = useMemo(() => {
-  //   return breakpointsLeft.reduce((prev, current) => prev + current, 0);
-  // }, [numBreakpointsMet, quest.breakpoints]);
   
   return (
     <div>
