@@ -3,7 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { Info } from "lucide-react";
 import { useState } from "react";
-import WhereAreDiceContent from "./_components/where-are-dice-content";
+import QuestTrackerContent from "./_components/quest-tracker-content";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import DiceRollerContent from "./_components/dice-roller-content";
+
+const enum ContentTab {
+  QUESTS = "quests",
+  ROLLS = "rolls"
+}
 
 export default function Home() {
   const [showInfo, setShowInfo] = useState(false);
@@ -41,7 +48,7 @@ export default function Home() {
         </div>
       )}
 
-      <WhereAreDiceContent />
+      <QuestTrackerContent />
     </div>
   );
 };

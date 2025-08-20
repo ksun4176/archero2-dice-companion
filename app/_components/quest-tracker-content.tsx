@@ -6,17 +6,18 @@ import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { CheckCircle, Circle, Dices } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 type TaskProgressProps = {
   quest: Quest;
   progress: number;
   onProgressChange: (name: QuestName, progress: number) => void;
 }
-const QuestTracker = memo(function QuestTracker({
+const QuestTracker = memo(({
   quest,
   progress,
   onProgressChange
-}: TaskProgressProps) {
+}: TaskProgressProps) => {
   const numBreakpoints = quest.breakpoints[0].length;
 
   const { numBreakpointsMet, completionPercent, remainingDice } = useMemo(() => {
@@ -94,7 +95,7 @@ const getBlankProgress = () => {
     Object.values(QuestName).map((questName) => [questName, 0])
   ) as QuestProgress
 }
-export default function WhereAreDiceContent() {
+export default function QuestTrackerContent() {
   const [questProgress, setQuestProgress] = useState<QuestProgress>(getBlankProgress);
   useEffect(() => {
     const saved = localStorage.getItem("questProgress");
@@ -125,6 +126,9 @@ export default function WhereAreDiceContent() {
     }));
   }, []);
 
+  const clearQuests = useCallback(() => {
+    setQuestProgress(getBlankProgress);
+  }, [])
 
   const { numEarned, numRemaining } = useMemo(() => {
     let numEarned = 0;
@@ -147,6 +151,13 @@ export default function WhereAreDiceContent() {
         <div className="flex items-center gap-2 text-lg font-bold">
           <Dices size={24} />
           <span>{numEarned} Earned | {numRemaining} Remaining</span>
+          <Button
+            variant='destructive'
+            size='sm'
+            onClick={clearQuests}
+          >
+            Clear
+          </Button>
         </div>
       </div>
       <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
