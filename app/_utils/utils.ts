@@ -22,62 +22,6 @@ export type Quest = {
 
 export const Quests: Quest[] = [
   {
-    name: QuestName.KillBosses,
-    breakpoints: [
-      [5, 10, 20, 30],
-      Array(4).fill(1)
-    ],
-    placeholderText: "# Killed",
-  },
-  {
-    name: QuestName.KillMinions,
-    breakpoints: [
-      Array(4).fill(0).map((_v, index) => (index+1) * 500),
-      Array(4).fill(1)
-    ],
-    placeholderText: "# Killed",
-  },
-  {
-    name: QuestName.GoldCave,
-    breakpoints: [
-      Array(4).fill(0).map((_v, index) => (index+1) * 2),
-      Array(4).fill(2)
-    ],
-    placeholderText: "# Done",
-  },
-  {
-    name: QuestName.DailyLogin,
-    breakpoints: [
-      Array(5).fill(0).map((_v, index) => (index+1)),
-      Array(5).fill(2)
-    ],
-    placeholderText: "# Days",
-  },
-  {
-    name: QuestName.ClaimAfkRewards,
-    breakpoints: [
-      [3, 5, 10, 15, 20],
-      Array(5).fill(1)
-    ],
-    placeholderText: "# Collected",
-  },
-  {
-    name: QuestName.SealBattle,
-    breakpoints: [
-      Array(5).fill(0).map((_v, index) => (index+1) * 2),
-      Array(5).fill(2)
-    ],
-    placeholderText: "# Done",
-  },
-  {
-    name: QuestName.Arena,
-    breakpoints: [
-      [3, 6, 10, 15, 20, 30],
-      Array(6).fill(1)
-    ],
-    placeholderText: "# Done",
-  },
-  {
     name: QuestName.IslandPack2,
     breakpoints: [
       Array(7).fill(0).map((_v, index) => (index+1)),
@@ -94,12 +38,60 @@ export const Quests: Quest[] = [
     placeholderText: "# Bought",
   },
   {
-    name: QuestName.UseGems,
+    name: QuestName.DailyLogin,
     breakpoints: [
-      [200, 500, 1000, 2000, 3000, 4000, 6000, 8000, 10000],
-      [1, 1, 1, 2, 2, 2, 2, 2, 2]
+      Array(5).fill(0).map((_v, index) => (index+1)),
+      Array(5).fill(2)
     ],
-    placeholderText: "# Used",
+    placeholderText: "# Days",
+  },
+  {
+    name: QuestName.GoldCave,
+    breakpoints: [
+      Array(4).fill(0).map((_v, index) => (index+1) * 2),
+      Array(4).fill(2)
+    ],
+    placeholderText: "# Done",
+  },
+  {
+    name: QuestName.KillMinions,
+    breakpoints: [
+      Array(4).fill(0).map((_v, index) => (index+1) * 500),
+      Array(4).fill(1)
+    ],
+    placeholderText: "# Killed",
+  },
+  {
+    name: QuestName.SealBattle,
+    breakpoints: [
+      Array(5).fill(0).map((_v, index) => (index+1) * 2),
+      Array(5).fill(2)
+    ],
+    placeholderText: "# Done",
+  },
+  {
+    name: QuestName.KillBosses,
+    breakpoints: [
+      [5, 10, 20, 30],
+      Array(4).fill(1)
+    ],
+    placeholderText: "# Killed",
+  },
+  {
+    name: QuestName.ClaimAfkRewards,
+    breakpoints: [
+      [3, 5, 10, 15, 20],
+      Array(5).fill(1)
+    ],
+    placeholderText: "# Collected",
+  },
+  {
+    name: QuestName.Arena,
+    breakpoints: [
+      [3, 6, 10, 15, 20, 30],
+      Array(6).fill(1)
+    ],
+    placeholderText: "# Done",
   },
   {
     name: QuestName.Keys,
@@ -110,10 +102,10 @@ export const Quests: Quest[] = [
     placeholderText: "# Used",
   },
   {
-    name: QuestName.Wishes,
+    name: QuestName.UseGems,
     breakpoints: [
-      [1, 2, 3, 5, 10, 15, 20],
-      [2, 2, 2, 2, 2, 2, 2]
+      [200, 500, 1000, 2000, 3000, 4000, 6000, 8000, 10000],
+      [1, 1, 1, 2, 2, 2, 2, 2, 2]
     ],
     placeholderText: "# Used",
   },
@@ -121,6 +113,14 @@ export const Quests: Quest[] = [
     name: QuestName.Shovels,
     breakpoints: [
       [2, 4, 6, 10, 20, 30, 40],
+      [2, 2, 2, 2, 2, 2, 2]
+    ],
+    placeholderText: "# Used",
+  },
+  {
+    name: QuestName.Wishes,
+    breakpoints: [
+      [1, 2, 3, 5, 10, 15, 20],
       [2, 2, 2, 2, 2, 2, 2]
     ],
     placeholderText: "# Used",
