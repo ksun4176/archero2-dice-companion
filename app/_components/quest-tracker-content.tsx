@@ -13,11 +13,11 @@ type TaskProgressProps = {
   progress: number;
   onProgressChange: (name: QuestName, progress: number) => void;
 }
-const QuestTracker = memo(({
+const QuestTracker = memo(function QuestTracker({
   quest,
   progress,
   onProgressChange
-}: TaskProgressProps) => {
+}: TaskProgressProps) {
   const numBreakpoints = quest.breakpoints[0].length;
 
   const { numBreakpointsMet, completionPercent, remainingDice } = useMemo(() => {
