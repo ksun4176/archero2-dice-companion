@@ -126,3 +126,30 @@ export const Quests: Quest[] = [
     placeholderText: "# Used",
   },
 ];
+
+/**
+ * Return a random integer between min and max (inclusive).
+ * @param min - Minimum integer value
+ * @param max - Maximum integer value
+ * @returns Random integer in [min, max]
+ */
+export function randint(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
+ * Selects one item from an array based on weights.
+ * @template T
+ * @param items - Array of items to choose from
+ * @param weights - Array of weights (same length as items)
+ * @returns Randomly selected item based on weight distribution
+ */
+export function weightedChoice<T>(items: T[], weights: number[]): T {
+  const total = weights.reduce((a, b) => a + b, 0);
+  let r = Math.random() * total;
+  for (let i = 0; i < items.length; i++) {
+    if (r < weights[i]) return items[i];
+    r -= weights[i];
+  }
+  return items[items.length - 1];
+}
