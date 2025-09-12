@@ -47,8 +47,7 @@ const QuestTracker = memo(function QuestTracker({
     }, [progress, numBreakpoints, quest.breakpoints]);
 
   const updateProgress = (e: ChangeEvent<HTMLInputElement>) => {
-    let value = parseInt(e.target.value);
-    onProgressChange(quest.name, value);
+    onProgressChange(quest.name, parseInt(e.target.value));
   };
 
   return (
