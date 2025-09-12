@@ -15,8 +15,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { calculateSuccessRate } from '../_utils/simulate';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+} from '@/components/ui/card';
 import { useEffect, useRef, useState } from 'react';
+import { Info } from 'lucide-react';
+import Image from 'next/image';
 
 const formSchema = z.object({
   goal: z.number().min(20000),
@@ -32,6 +39,7 @@ interface ChanceCalculatorCardProps {
 export default function ChanceCalculatorCard({
   className,
 }: ChanceCalculatorCardProps) {
+  const [showInfo, setShowInfo] = useState(false);
   const resultRef = useRef<HTMLDivElement | null>(null);
   const [result, setResult] = useState<number | undefined>();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -73,9 +81,37 @@ export default function ChanceCalculatorCard({
   return (
     <Card className={className}>
       <CardHeader>
-        <span className='text-lg font-bold'>Success Rate Calculator</span>
+        <div className='flex items-center'>
+          <span className='text-lg font-bold'>Success Rate Calculator</span>
+          <CardAction>
+            <Button
+              variant='ghost'
+              size='icon'
+              onClick={() => setShowInfo(!showInfo)}
+            >
+              <Info />
+            </Button>
+          </CardAction>
+        </div>
       </CardHeader>
       <CardContent>
+        {showInfo && (
+          <div className='mb-4 p-2 bg-secondary border rounded-lg text-sm'>
+            <h3 className='font-semibold mb-2'>How to use:</h3>
+            <ul className='space-y-1 list-disc pl-4'>
+              <li>{`Fill in the fields`}</li>
+              <li>Press Calculate</li>
+              <li>See image below for tile numbers</li>
+            </ul>
+            <Image
+              src={'/archero2-dice-companion/NumberedTiles.jpeg'}
+              alt='Map with tiles labeled by numbers'
+              width={300}
+              height={350}
+              unoptimized
+            />
+          </div>
+        )}
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -129,7 +165,8 @@ export default function ChanceCalculatorCard({
                     />
                   </FormControl>
                   <FormDescription>
-                    This is the amount of dice you have.
+                    This is the amount of dice you have. Collect all of your
+                    dice from tasks + milestones.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -140,7 +177,7 @@ export default function ChanceCalculatorCard({
               name='tileOn'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Current Tile</FormLabel>
+                  <FormLabel>{`Current Tile (Optional)`}</FormLabel>
                   <FormControl>
                     <Input
                       type='number'
@@ -167,7 +204,7 @@ export default function ChanceCalculatorCard({
               name='current'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Current Points</FormLabel>
+                  <FormLabel>{`Current Points (Optional)`}</FormLabel>
                   <FormControl>
                     <Input
                       type='number'
@@ -194,7 +231,7 @@ export default function ChanceCalculatorCard({
               name='rollsDone'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Rolls Done</FormLabel>
+                  <FormLabel>{`Rolls Done (Optional)`}</FormLabel>
                   <FormControl>
                     <Input
                       type='number'

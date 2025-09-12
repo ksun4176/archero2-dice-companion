@@ -6,6 +6,7 @@ import { useState } from 'react';
 import QuestTrackerContent from './_components/quest-tracker-content';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import HomeContent from './_components/home-content';
+import Image from 'next/image';
 
 const enum ContentTab {
   QUESTS = 'quests',
@@ -31,10 +32,13 @@ export default function Home() {
             href='https://ko-fi.com/O4O71FBM0I'
             target='_blank'
           >
-            <img
-              className='h-9 border-0'
+            <Image
               src='https://storage.ko-fi.com/cdn/kofi5.png?v=6'
               alt='Buy Me a Coffee at ko-fi.com'
+              width={143}
+              height={36}
+              unoptimized
+              className='h-9 border-0'
             />
           </a>
         </div>
