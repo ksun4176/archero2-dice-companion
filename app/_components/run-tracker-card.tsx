@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Undo2, X } from 'lucide-react';
+import { Info, Undo2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { ControllerRenderProps, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -48,6 +48,7 @@ interface RunTrackerCardProps {
   className?: string;
 }
 export default function RunTrackerCard({ className }: RunTrackerCardProps) {
+  const [showInfo, setShowInfo] = useState(false);
   const resultRef = useRef<HTMLDivElement | null>(null);
   const [result, setResult] = useState<Result | undefined>();
   const [multiplier, setMultiplier] = useState<number>(1);
@@ -81,7 +82,6 @@ export default function RunTrackerCard({ className }: RunTrackerCardProps) {
   }, [form]);
   // Save state to localStorage whenever it changes
   useEffect(() => {
-    console.log('hello');
     const state: StoredState = {
       diceFromBoard: form.getValues().diceFromBoard,
       diceAddedStack: diceAddedStack,
@@ -151,29 +151,59 @@ export default function RunTrackerCard({ className }: RunTrackerCardProps) {
       <CardHeader>
         <div className='flex items-center'>
           <span className='text-lg font-bold'>Track How My Run Went</span>
+          <CardAction className='flex-1'>
+            <div className='flex items-center justify-between'>
+              <Button
+                variant='ghost'
+                size='icon'
+                onClick={() => setShowInfo(!showInfo)}
+              >
+                <Info />
+              </Button>
+              {confirmReset ? (
+                <Button
+                  onClick={resetDiceAdded}
+                  variant='destructive'
+                  aria-label='Confirm reset'
+                >
+                  Confirm
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => setConfirmReset(true)}
+                  variant='ghost'
+                  aria-label='Reset dice from board'
+                  disabled={diceAddedStack.length <= 0}
+                >
+                  <X />
+                  Reset Dice
+                </Button>
+              )}
+            </div>
+          </CardAction>
         </div>
-        <CardAction>
-          {confirmReset ? (
-            <Button
-              onClick={resetDiceAdded}
-              variant='destructive'
-              aria-label='Confirm reset'
-            >
-              Confirm
-            </Button>
-          ) : (
-            <Button
-              onClick={() => setConfirmReset(true)}
-              variant='ghost'
-              aria-label='Reset dice from board'
-            >
-              <X />
-              Reset Dice
-            </Button>
-          )}
-        </CardAction>
       </CardHeader>
       <CardContent>
+        {showInfo && (
+          <div className='mb-4 p-2 bg-secondary border rounded-lg text-sm'>
+            <h3 className='font-semibold mb-2'>How to use:</h3>
+            <ul className='space-y-1 list-disc pl-4'>
+              <li>
+                As you do your run, track how many dice you are getting from the
+                board.
+                <ul className='space-y-1 list-disc pl-4'>
+                  <li>Pick the multiplier that matches your roll</li>
+                  <li>Add the amount of dice you got as a reward</li>
+                </ul>
+              </li>
+              <li>
+                At the end of your run, put in how many points you got and how
+                many rolls you did in total
+              </li>
+              <li>Press Calculate</li>
+            </ul>
+          </div>
+        )}
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -215,7 +245,7 @@ export default function RunTrackerCard({ className }: RunTrackerCardProps) {
                               updateDiceFromBoard(field, multiplier)
                             }
                           >
-                            {multiplier}
+                            {multiplier} Dice
                           </Button>
                           <Button
                             className='flex-2 bg-success'
@@ -224,7 +254,7 @@ export default function RunTrackerCard({ className }: RunTrackerCardProps) {
                               updateDiceFromBoard(field, multiplier * 2)
                             }
                           >
-                            {multiplier * 2}
+                            {multiplier * 2} Dice
                           </Button>
                           <Button
                             variant='secondary'
