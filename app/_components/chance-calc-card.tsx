@@ -2,6 +2,12 @@
 
 import { Button } from '@/components/ui/button';
 import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+} from '@/components/ui/card';
+import {
   Form,
   FormControl,
   FormDescription,
@@ -12,18 +18,12 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Info } from 'lucide-react';
+import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { calculateSuccessRate } from '../_utils/simulate';
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardHeader,
-} from '@/components/ui/card';
-import { useEffect, useRef, useState } from 'react';
-import { Info } from 'lucide-react';
-import Image from 'next/image';
 
 const formSchema = z.object({
   goal: z.number().min(20000),
@@ -74,7 +74,10 @@ export default function ChanceCalculatorCard({
 
   useEffect(() => {
     if (result && resultRef) {
-      resultRef.current?.scrollIntoView();
+      resultRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
     }
   }, [result]);
 
@@ -184,10 +187,16 @@ export default function ChanceCalculatorCard({
                       step={1}
                       placeholder='Tile #'
                       {...field}
-                      value={!field.value ? '' : `${field.value}`}
+                      value={
+                        field.value === 0
+                          ? '0'
+                          : !field.value
+                          ? ''
+                          : `${field.value}`
+                      }
                       onChange={(e) =>
                         field.onChange(
-                          e.target.value ? parseInt(e.target.value) : 0
+                          e.target.value ? parseInt(e.target.value) : undefined
                         )
                       }
                     />

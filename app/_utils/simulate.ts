@@ -18,17 +18,18 @@ enum Stat {
   TILE = 'Tile',
 }
 
+const pointsBreakpoints: number[] = [0, 20000, 40000, 60000, 80000]
+  .map((s) => [2000, 5000, 8000, 12000, 16000, 20000].map((bp) => bp + s))
+  .flat();
+
+const rollDiceTaskBreakpoints: number[] = [
+  5, 10, 20, 30, 40, 60, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600,
+];
+
 /**
  * Tracks results of a single simulation run, including points, dice gained/spent.
  */
 class SimResult {
-  static pointsBreakpoints: number[] = [0, 20000, 40000, 60000, 80000]
-    .map((s) => [2000, 5000, 8000, 12000, 16000, 20000].map((bp) => bp + s))
-    .flat();
-
-  static rollDiceTaskBreakpoints: number[] = [
-    5, 10, 20, 30, 40, 60, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600,
-  ];
   static rollDiceTaskReward: number[] = [
     1, 2, 2, 2, 2, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
   ];
@@ -51,12 +52,8 @@ class SimResult {
     this.stats[Stat.POINTS] += numPoints;
     let numDice = 0;
 
-    for (
-      let i = this.pointsBpMet + 1;
-      i < SimResult.pointsBreakpoints.length;
-      i++
-    ) {
-      const bp = SimResult.pointsBreakpoints[i];
+    for (let i = this.pointsBpMet + 1; i < pointsBreakpoints.length; i++) {
+      const bp = pointsBreakpoints[i];
       if (this.stats[Stat.POINTS] < bp) break;
       this.pointsBpMet = i;
       numDice += 2;
@@ -83,10 +80,10 @@ class SimResult {
     let numDice = 0;
     for (
       let i = this.rollDiceBpMet + 1;
-      i < SimResult.rollDiceTaskBreakpoints.length;
+      i < rollDiceTaskBreakpoints.length;
       i++
     ) {
-      const bp = SimResult.rollDiceTaskBreakpoints[i];
+      const bp = rollDiceTaskBreakpoints[i];
       if (this.stats[Stat.ROLLS_DONE] < bp) break;
       this.rollDiceBpMet = i;
       numDice += SimResult.rollDiceTaskReward[i];
@@ -223,7 +220,9 @@ const board: Tile[] = [
   new FlatTile(200),
 ];
 
-const multiplierMap: number[] = [1,1,1,1,1,1,1,1,10,10,1,1,1,1,1,1,1,1,1,1,10,10,10,1];
+const multiplierMap: number[] = [
+  1, 1, 1, 1, 1, 1, 1, 1, 10, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 10, 10, 10, 1,
+];
 
 /**
  * Simulate going around the board starting with a specified number of dice rolls.
@@ -237,15 +236,21 @@ const multiplierMap: number[] = [1,1,1,1,1,1,1,1,10,10,1,1,1,1,1,1,1,1,1,1,10,10
 function simulateSingleRun(
   numDiceRolls: number,
   pointsToMeet: number,
-  prevRun: SimResult | null = null,
+  prevRun: SimResult | null = null
 ): SimResult {
   const result = prevRun ?? new SimResult();
   while (
     result.stats[Stat.POINTS] < pointsToMeet &&
-    numDiceRolls - result.stats[Stat.INITIAL_DICE] + result.stats[Stat.EXTRA_DICE] > 0
+    numDiceRolls -
+      result.stats[Stat.INITIAL_DICE] +
+      result.stats[Stat.EXTRA_DICE] >
+      0
   ) {
     // turns left
-    const numTurns = numDiceRolls - result.stats[Stat.INITIAL_DICE] + result.stats[Stat.EXTRA_DICE];
+    const numTurns =
+      numDiceRolls -
+      result.stats[Stat.INITIAL_DICE] +
+      result.stats[Stat.EXTRA_DICE];
 
     // enforce multiplier caps by turns taken
     let multiplier = multiplierMap[result.stats[Stat.TILE]];
@@ -265,26 +270,36 @@ function simulateSingleRun(
   }
 
   // handle "just shy of breakpoint" edge case
-  if (result.rollDiceBpMet < SimResult.rollDiceTaskBreakpoints.length - 1) {
-    const nextDiceBp = SimResult.rollDiceTaskBreakpoints[result.rollDiceBpMet + 1];
-    const nextDiceBpReward = SimResult.rollDiceTaskReward[result.rollDiceBpMet + 1];
+  if (result.rollDiceBpMet < rollDiceTaskBreakpoints.length - 1) {
+    const nextDiceBp = rollDiceTaskBreakpoints[result.rollDiceBpMet + 1];
+    const nextDiceBpReward =
+      SimResult.rollDiceTaskReward[result.rollDiceBpMet + 1];
     if (nextDiceBp - result.stats[Stat.ROLLS_DONE] < nextDiceBpReward) {
       let difference = nextDiceBp - result.stats[Stat.ROLLS_DONE];
       while (
         difference > 0 &&
-        (result.stats[Stat.INITIAL_DICE] < numDiceRolls || result.stats[Stat.EXTRA_DICE] > 0)
+        (result.stats[Stat.INITIAL_DICE] < numDiceRolls ||
+          result.stats[Stat.EXTRA_DICE] > 0)
       ) {
-        const numTurns = numDiceRolls - result.stats[Stat.INITIAL_DICE] + result.stats[Stat.EXTRA_DICE];
+        const numTurns =
+          numDiceRolls -
+          result.stats[Stat.INITIAL_DICE] +
+          result.stats[Stat.EXTRA_DICE];
 
         let multiplier = multiplierMap[result.stats[Stat.TILE]];
-        if (numTurns < 20 || difference < 2) multiplier = Math.min(1, multiplier);
-        else if (numTurns < 30 || difference < 3) multiplier = Math.min(2, multiplier);
-        else if (numTurns < 50 || difference < 4) multiplier = Math.min(3, multiplier);
-        else if (numTurns < 100 || difference < 6) multiplier = Math.min(5, multiplier);
+        if (numTurns < 20 || difference < 2)
+          multiplier = Math.min(1, multiplier);
+        else if (numTurns < 30 || difference < 3)
+          multiplier = Math.min(2, multiplier);
+        else if (numTurns < 50 || difference < 4)
+          multiplier = Math.min(3, multiplier);
+        else if (numTurns < 100 || difference < 6)
+          multiplier = Math.min(5, multiplier);
 
         const oldTile = board[result.stats[Stat.TILE]];
         const roll = oldTile.roll(multiplier, result);
-        result.stats[Stat.TILE] = (result.stats[Stat.TILE] + roll) % board.length;
+        result.stats[Stat.TILE] =
+          (result.stats[Stat.TILE] + roll) % board.length;
 
         const tile = board[result.stats[Stat.TILE]];
         tile.getReward(multiplier, result);
@@ -331,11 +346,7 @@ export function calculateSuccessRate(
     // set starting tile
     initialResult.stats[Stat.TILE] = currentTile;
 
-    const run = simulateSingleRun(
-      numDice + rollsDone,
-      Infinity,
-      initialResult
-    );
+    const run = simulateSingleRun(numDice + rollsDone, Infinity, initialResult);
 
     if (run.stats[Stat.POINTS] >= goalPoints) {
       numSuccess++;
@@ -343,7 +354,36 @@ export function calculateSuccessRate(
   }
 
   const successRate =
-    (numSuccess === numRuns ? numRuns - 1 : numSuccess) / numRuns * 100;
+    ((numSuccess === numRuns ? numRuns - 1 : numSuccess) / numRuns) * 100;
 
   return successRate;
+}
+
+/**
+ * Find the number of dice needed to reach a goal with a given success rate.
+ *
+ * @param goalPoints - Points target to reach.
+ * @param successRate - Desired success rate (e.g., 99.99).
+ * @returns Number of initial dice corresponding to that success rate.
+ */
+export function findDiceForSuccessRate(
+  goalPoints: number,
+  successRate: number
+): number {
+  const numRuns = 10_000;
+  const results: number[] = [];
+
+  for (let i = 0; i < numRuns; i++) {
+    const run = simulateSingleRun(Infinity, goalPoints);
+    results.push(run.stats[Stat.INITIAL_DICE]);
+  }
+
+  // sort by dice used ascending
+  results.sort((a, b) => a - b);
+
+  // clamp successRate between [0,100]
+  const rate = Math.max(0, Math.min(100, successRate));
+  const index = Math.floor((rate / 100) * numRuns) - 1;
+
+  return index < 0 ? 0 : results[index];
 }
