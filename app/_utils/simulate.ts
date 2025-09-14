@@ -1,4 +1,11 @@
-import { randint, weightedChoice } from './utils';
+import {
+  PointsBreakpoints,
+  PointsMilestoneReward,
+  randint,
+  RollDiceTaskBreakpoints,
+  RollDiceTaskReward,
+  weightedChoice,
+} from './utils';
 
 /**
  * Stats tracked throughout a simulation run.
@@ -18,22 +25,10 @@ enum Stat {
   TILE = 'Tile',
 }
 
-const pointsBreakpoints: number[] = [0, 20000, 40000, 60000, 80000]
-  .map((s) => [2000, 5000, 8000, 12000, 16000, 20000].map((bp) => bp + s))
-  .flat();
-
-const rollDiceTaskBreakpoints: number[] = [
-  5, 10, 20, 30, 40, 60, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600,
-];
-
 /**
  * Tracks results of a single simulation run, including points, dice gained/spent.
  */
 class SimResult {
-  static rollDiceTaskReward: number[] = [
-    1, 2, 2, 2, 2, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-  ];
-
   pointsBpMet: number = -1;
   rollDiceBpMet: number = -1;
   stats: Record<Stat, number>;
@@ -52,11 +47,11 @@ class SimResult {
     this.stats[Stat.POINTS] += numPoints;
     let numDice = 0;
 
-    for (let i = this.pointsBpMet + 1; i < pointsBreakpoints.length; i++) {
-      const bp = pointsBreakpoints[i];
+    for (let i = this.pointsBpMet + 1; i < PointsBreakpoints.length; i++) {
+      const bp = PointsBreakpoints[i];
       if (this.stats[Stat.POINTS] < bp) break;
       this.pointsBpMet = i;
-      numDice += 2;
+      numDice += PointsMilestoneReward[i];
     }
     this.stats[Stat.EXTRA_DICE] += numDice;
   }
@@ -80,13 +75,13 @@ class SimResult {
     let numDice = 0;
     for (
       let i = this.rollDiceBpMet + 1;
-      i < rollDiceTaskBreakpoints.length;
+      i < RollDiceTaskBreakpoints.length;
       i++
     ) {
-      const bp = rollDiceTaskBreakpoints[i];
+      const bp = RollDiceTaskBreakpoints[i];
       if (this.stats[Stat.ROLLS_DONE] < bp) break;
       this.rollDiceBpMet = i;
-      numDice += SimResult.rollDiceTaskReward[i];
+      numDice += RollDiceTaskReward[i];
     }
     this.stats[Stat.EXTRA_DICE] += numDice;
   }
@@ -270,10 +265,9 @@ function simulateSingleRun(
   }
 
   // handle "just shy of breakpoint" edge case
-  if (result.rollDiceBpMet < rollDiceTaskBreakpoints.length - 1) {
-    const nextDiceBp = rollDiceTaskBreakpoints[result.rollDiceBpMet + 1];
-    const nextDiceBpReward =
-      SimResult.rollDiceTaskReward[result.rollDiceBpMet + 1];
+  if (result.rollDiceBpMet < RollDiceTaskBreakpoints.length - 1) {
+    const nextDiceBp = RollDiceTaskBreakpoints[result.rollDiceBpMet + 1];
+    const nextDiceBpReward = RollDiceTaskReward[result.rollDiceBpMet + 1];
     if (nextDiceBp - result.stats[Stat.ROLLS_DONE] < nextDiceBpReward) {
       let difference = nextDiceBp - result.stats[Stat.ROLLS_DONE];
       while (

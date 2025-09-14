@@ -130,6 +130,22 @@ export const Quests: Quest[] = [
   },
 ];
 
+export const PointsBreakpoints: number[] = [0, 20000, 40000, 60000, 80000]
+  .map((s) => [2000, 5000, 8000, 12000, 16000, 20000].map((bp) => bp + s))
+  .flat();
+
+export const PointsMilestoneReward: number[] = Array(
+  PointsBreakpoints.length
+).fill(2);
+
+export const RollDiceTaskBreakpoints: number[] = [
+  5, 10, 20, 30, 40, 60, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600,
+];
+
+export const RollDiceTaskReward: number[] = [
+  1, 2, 2, 2, 2, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+];
+
 /**
  * Return a random integer between min and max (inclusive).
  * @param min - Minimum integer value
@@ -158,27 +174,32 @@ export function weightedChoice<T>(items: T[], weights: number[]): T {
 }
 
 /**
- * Scrolls the given element into view only if it is not already visible
- * in the current viewport.
+ * Calculate the net dice used based on total rolls, points achieved, and dice gained from the board.
  *
- * @param element - The target DOM element to scroll into view.
- * @param options - Optional scrolling behavior and alignment settings,
- *                  passed directly to `scrollIntoView()`.
+ * @param totalRolls - Total dice rolls done.
+ * @param pointsAchieved - Total points achieved.
+ * @param diceFromBoard - Dice gained directly from board tiles.
+ * @returns Net dice used.
  */
-export function scrollIntoViewIfNeeded(
-  element: HTMLElement,
-  options?: ScrollIntoViewOptions
-) {
-  const rect = element.getBoundingClientRect();
-
-  const inView =
-    rect.top >= 0 &&
-    rect.left >= 0 &&
-    rect.bottom <=
-      (window.innerHeight || document.documentElement.clientHeight) &&
-    rect.right <= (window.innerWidth || document.documentElement.clientWidth);
-
-  if (!inView) {
-    element.scrollIntoView(options);
+export function calculateNetDiceUsed(
+  totalRolls: number,
+  pointsAchieved: number,
+  diceFromBoard: number
+): number {
+  let rollDiceBonus = 0;
+  for (let i = 0; i < RollDiceTaskBreakpoints.length; i++) {
+    if (totalRolls < RollDiceTaskBreakpoints[i]) {
+      break;
+    }
+    rollDiceBonus += RollDiceTaskReward[i];
   }
+  let pointsBonus = 0;
+  for (let i = 0; i < PointsBreakpoints.length; i++) {
+    if (pointsAchieved < PointsBreakpoints[i]) {
+      break;
+    }
+    pointsBonus += PointsMilestoneReward[i];
+  }
+  const netDiceUsed = totalRolls - diceFromBoard - rollDiceBonus - pointsBonus;
+  return netDiceUsed;
 }

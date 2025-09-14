@@ -60,7 +60,7 @@ export default function ShouldRollCard({ className }: ShouldRollCardProps) {
     <Card className={className}>
       <CardHeader>
         <div className='flex items-center'>
-          <span className='text-lg font-bold'>Should I roll?</span>
+          <span className='text-lg font-bold'>Should I Roll?</span>
         </div>
       </CardHeader>
       <CardContent>
