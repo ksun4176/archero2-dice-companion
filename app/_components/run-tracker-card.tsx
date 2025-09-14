@@ -355,7 +355,11 @@ export default function RunTrackerCard({ className }: RunTrackerCardProps) {
             </div>
             <div className='flex justify-between'>
               <span>Points per Initial Dice</span>
-              <span>{(result.points / result.diceUsed).toFixed(2)}</span>
+              <span>
+                {result.diceUsed <= 0
+                  ? 'Infinity'
+                  : (result.points / result.diceUsed).toFixed(2)}
+              </span>
             </div>
             <div className='flex justify-between'>
               <span>Percentile</span>
@@ -366,7 +370,7 @@ export default function RunTrackerCard({ className }: RunTrackerCardProps) {
                     : 'text-red-700 dark:text-red-400'
                 }
               >
-                {result.percentile}%
+                {result.percentile.toFixed(2)}%
               </span>
             </div>
           </div>
