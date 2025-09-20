@@ -1,76 +1,39 @@
-'use client';
-
 import { Button } from '@/components/ui/button';
-import { Info } from 'lucide-react';
-import { useState } from 'react';
-import QuestTrackerContent from './_components/quest-tracker-content';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import HomeContent from './_components/home-content';
+import { BookAlert } from 'lucide-react';
 import Image from 'next/image';
-
-const enum ContentTab {
-  QUESTS = 'quests',
-  HOME = 'home',
-}
+import AppBar from './_components/app-bar';
+import ChanceCalculatorCard from './_components/chance-calc-card';
+import RunTrackerCard from './_components/run-tracker-card';
+import ShouldRollCard from './_components/should-roll-card';
+import QuestTrackerButton from './_components/quest-tracker-button';
 
 export default function Home() {
-  const [showInfo, setShowInfo] = useState(false);
-
   return (
     <div className='min-w-sm max-w-7xl mx-auto p-4 min-h-screen'>
-      <div className='flex items-center mb-4 justify-between'>
-        <h1 className='text-xl font-bold'>Dice Companion</h1>
-        <div className='flex items-center'>
-          <Button
-            variant='ghost'
-            size='icon'
-            onClick={() => setShowInfo(!showInfo)}
-          >
-            <Info size={20} />
-          </Button>
-          <a
-            href='https://ko-fi.com/O4O71FBM0I'
-            target='_blank'
-          >
-            <Image
-              src='https://storage.ko-fi.com/cdn/kofi5.png?v=6'
-              alt='Buy Me a Coffee at ko-fi.com'
-              width={143}
-              height={36}
-              unoptimized
-              className='h-9 border-0'
-            />
-          </a>
+      <AppBar />
+      <div className='flex justify-center'>
+        <div className='grid md:grid-cols-2 gap-4'>
+          <div className='flex flex-col gap-4'>
+            <ShouldRollCard />
+            <div className='flex gap-4'>
+              <Button
+                variant='outline'
+                size='lg'
+                className='h-15 flex-1 text-lg'
+              >
+                <BookAlert
+                  size='6'
+                  className='size-6'
+                />
+                How To Guide
+              </Button>
+              <QuestTrackerButton />
+            </div>
+            <RunTrackerCard />
+          </div>
+          <ChanceCalculatorCard />
         </div>
       </div>
-
-      {showInfo && (
-        <div className='mb-4 p-2 bg-secondary border rounded-lg text-sm'>
-          <h3 className='font-semibold mb-2'>How to use:</h3>
-          <ul className='space-y-1 list-disc pl-4'>
-            <li>Track the amount of dice you can still get</li>
-            <li>Track your rolls</li>
-            <li>
-              Calculate your Points per Initial Dice to see how you did compared
-              to others
-            </li>
-          </ul>
-        </div>
-      )}
-      <Tabs defaultValue={ContentTab.HOME}>
-        <div className='flex justify-center'>
-          <TabsList className='h-12 [&>button]:text-lg'>
-            <TabsTrigger value={ContentTab.HOME}>Home</TabsTrigger>
-            <TabsTrigger value={ContentTab.QUESTS}>Quests</TabsTrigger>
-          </TabsList>
-        </div>
-        <TabsContent value={ContentTab.HOME}>
-          <HomeContent />
-        </TabsContent>
-        <TabsContent value={ContentTab.QUESTS}>
-          <QuestTrackerContent />
-        </TabsContent>
-      </Tabs>
     </div>
   );
 }
