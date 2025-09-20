@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import { BookAlert } from 'lucide-react';
-import Image from 'next/image';
 import AppBar from './_components/app-bar';
 import ChanceCalculatorCard from './_components/chance-calc-card';
 import RunTrackerCard from './_components/run-tracker-card';
