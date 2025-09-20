@@ -1,0 +1,9 @@
+.tile {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+}
+
+.imageTile {
+  filter: brightness(1.2);
+}
