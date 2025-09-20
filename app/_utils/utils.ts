@@ -1,3 +1,5 @@
+export const basePath = '/archero2-dice-companion';
+
 export enum QuestName {
   KillBosses = 'Kill Bosses',
   KillMinions = 'Kill Minions',

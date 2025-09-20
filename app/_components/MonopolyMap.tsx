@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import styles from './styles/MonopolyMap.module.css';
+import { basePath } from '../_utils/utils';
 
 const tiles = [
   { left: 149, top: 88, pos: 14 },
@@ -36,7 +37,7 @@ export default function MonopolyMap(props: MonopolyMapProps) {
   return (
     <div className='relative w-[350px] h-[370px]'>
       <Image
-        src={`archero2-dice-companion/tiles/bg-monopoly.png`}
+        src={`${basePath}/tiles/bg-monopoly.png`}
         alt='Monopoly Map Background'
         fill
         className='object-contain'
@@ -54,7 +55,7 @@ export default function MonopolyMap(props: MonopolyMapProps) {
             style={{ left: `${tile.left}px`, top: `${tile.top}px` }}
           >
             <Image
-              src={`archero2-dice-companion//tiles/tile_x${multiplier}.png`}
+              src={`${basePath}/tiles/tile_x${multiplier}.png`}
               alt={`Tile ${tile.pos}`}
               width={152}
               height={180}

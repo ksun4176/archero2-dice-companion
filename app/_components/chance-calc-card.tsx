@@ -24,6 +24,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { calculateSuccessRate } from '../_utils/simulate';
+import { basePath } from '../_utils/utils';
 
 const formSchema = z.object({
   goal: z.number().min(20000),
@@ -107,7 +108,7 @@ export default function ChanceCalculatorCard({
               <li>See image below for tile numbers</li>
             </ul>
             <Image
-              src={'/archero2-dice-companion/NumberedTiles.jpeg'}
+              src={`${basePath}/NumberedTiles.jpeg`}
               alt='Map with tiles labeled by numbers'
               width={300}
               height={350}

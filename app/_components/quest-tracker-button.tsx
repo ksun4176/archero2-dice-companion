@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/drawer';
 import Image from 'next/image';
 import QuestTrackerContent from './quest-tracker-content';
+import { basePath } from '../_utils/utils';
 
 export default function QuestTrackerButton() {
   return (
@@ -22,7 +23,7 @@ export default function QuestTrackerButton() {
           aria-label={`Open Task List`}
         >
           <Image
-            src='/archero2-dice-companion/Icon_TaskCenter.png'
+            src={`${basePath}/Icon_TaskCenter.png`}
             alt='Icon Task Center'
             width={150}
             height={150}
